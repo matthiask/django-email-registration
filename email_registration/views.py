@@ -29,7 +29,6 @@ _('This e-mail address already exists as an account. Do you want to reset your p
 
 @require_POST
 def email_registration_form(request):
-    # TODO move this into an external module for reusability
     form = RegistrationForm(request.POST)
 
     if form.is_valid():
