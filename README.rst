@@ -29,8 +29,6 @@ Twitter Bootstrap.
         {% trans "Register" %}</button>
     </form>
 
-      </div>
-    </div>
     <script>
     function init_registration($) {
       $('#registration').on('submit', function() {
@@ -42,8 +40,7 @@ Twitter Bootstrap.
         return false;
       });
     }
-
-    onReady.push(init_registration);
+    $(init_registration);
     </script>
 
 3. Add ``email_registration`` to ``INSTALLED_APPS`` and include
