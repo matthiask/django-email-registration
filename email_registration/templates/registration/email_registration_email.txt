@@ -1,0 +1,7 @@
+Registration link
+
+Click the following link to activate your account:
+
+{{ url }}
+
+Warm regards

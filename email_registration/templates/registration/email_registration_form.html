@@ -1,0 +1,15 @@
+{% load i18n towel_form_tags %}
+{% load url from future %}
+<form method="post" action="{% url "email_registration_form" %}" class="well" id="registration">
+  {% csrf_token %}
+  {% form_errors form %}
+  <div class="controls">
+    {% form_item_plain form.email %}
+  </div>
+  <button type="submit" class="btn btn-primary">
+    {% trans "Register" %}</button>
+  <style>
+  #registration .form-errors span { display: none; }
+  #registration .form-errors ul { list-style: none; margin: 0; padding: 0; }
+  </style>
+</form>

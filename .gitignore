@@ -1,0 +1,11 @@
+*.pyc
+*~
+.*.swp
+\#*#
+/secrets.py
+.DS_Store
+._*
+/MANIFEST
+/_build
+/build
+/dist
