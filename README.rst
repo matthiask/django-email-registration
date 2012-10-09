@@ -5,3 +5,48 @@ django-email-registration
 The eleventy-eleventh email registration app for Django.
 
 But this one does not feed your cat.
+
+
+Usage
+=====
+
+This example assumes you are using a recent version of Django, jQuery and
+Twitter Bootstrap.
+
+1. Install ``django-email-registration`` using pip.
+
+2. Copy this code somewhere on your login or registration page::
+
+    <h2>{% trans "Send an activation link" %}</h2>
+    <form method="post" action="{% url "email_registration_form" %}"
+        class="well" id="registration">
+      {% csrf_token %}
+      <div class="controls">
+        <input id="id_email" type="text" name="email" maxlength="30"
+          placeholder="{% trans "E-mail address" %}">
+      </div>
+      <button type="submit" class="btn btn-primary">
+        {% trans "Register" %}</button>
+    </form>
+
+      </div>
+    </div>
+    <script>
+    function init_registration($) {
+      $('#registration').on('submit', function() {
+        var $form = $(this);
+        $.post(this.action, $form.serialize(), function(data) {
+          $('#registration').replaceWith(data);
+          init_registration($);
+        });
+        return false;
+      });
+    }
+
+    onReady.push(init_registration);
+    </script>
+
+3. Add ``email_registration`` to ``INSTALLED_APPS`` and include
+   ``email_registration.urls`` somewhere in your URLconf.
+
+4. Presto.
