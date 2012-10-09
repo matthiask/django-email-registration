@@ -43,6 +43,9 @@ Twitter Bootstrap.
     $(init_registration);
     </script>
 
+   (Alternatively, include the template snippet
+   ``registration/email_registration_include.html`` somewhere.)
+
 3. Add ``email_registration`` to ``INSTALLED_APPS`` and include
    ``email_registration.urls`` somewhere in your URLconf.
 

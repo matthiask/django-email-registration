@@ -1,0 +1,31 @@
+{% load i18n %}
+{% load url from future %}
+<form method="post" action="{% url "email_registration_form" %}" class="well" id="registration">
+  {% csrf_token %}
+  <div class="controls">
+    <input id="id_email" type="text" name="email" maxlength="30"
+      placeholder="{% trans "E-mail address" %}">
+  </div>
+  <button type="submit" class="btn btn-primary">
+    {% trans "Register" %}</button>
+</form>
+
+<script>
+function init_registration($) {
+  $('#registration').on('submit', function() {
+    var $form = $(this);
+    $.post(this.action, $form.serialize(), function(data) {
+      $('#registration').replaceWith(data);
+      init_registration($);
+    });
+    return false;
+  });
+}
+
+if (typeof(onReady) == 'object') {
+  // towel_bootstrap
+  onReady.push(init_registration);
+} else if (jQuery) {
+  jQuery(init_registration);
+}
+</script>
