@@ -37,22 +37,21 @@ class Registration(models.Model):
     def get_absolute_url(self):
         return ('email_registration_confirm', (), {'code': self.code})
 
-    def send_mail(self, save=True):
+    def send_mail(self, request):
+        self.sent_on = timezone.now()
+        self.save()
+
         lines = render_to_string('registration/email_registration_email.txt', {
-            'registration': registration,
-            'url': request.build_absolute_uri(registration.get_absolute_url()),
+            'registration': self,
+            'url': request.build_absolute_uri(self.get_absolute_url()),
             }).splitlines()
 
         message = EmailMultiAlternatives(
             subject=lines[0],
             body=u'\n'.join(lines[2:]),
-            to=[email],
+            to=[self.email],
             headers={
                 #'Reply-To': 'TODO something sane',
                 },
             )
         message.send()
-
-        self.sent_on = timezone.now()
-        if save:
-            self.save()

@@ -35,7 +35,7 @@ def email_registration_form(request):
         except Registration.DoesNotExist:
             registration = Registration(email=email)
 
-        registration.send_mail()
+        registration.send_mail(request)
 
         return render(request, 'registration/email_registration_sent.html', {
             'email': email,
