@@ -88,10 +88,6 @@ def email_registration_confirm(request, code):
             code.user = User.objects.create_user(code.email, email=code.email,
                 password=temporary)
 
-            if code.client:
-                # Assign user to the given client right now
-                code.client.access_set.create(user=user)
-
             messages.success(request,
                 _('Successfully created a new user. Please set a password.'))
 
