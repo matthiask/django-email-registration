@@ -2,7 +2,9 @@ import random
 import string
 
 from django.contrib.auth.models import User
+from django.core.mail import EmailMultiAlternatives
 from django.db import models
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -34,3 +36,23 @@ class Registration(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('email_registration_confirm', (), {'code': self.code})
+
+    def send_mail(self, save=True):
+        lines = render_to_string('registration/email_registration_email.txt', {
+            'registration': registration,
+            'url': request.build_absolute_uri(registration.get_absolute_url()),
+            }).splitlines()
+
+        message = EmailMultiAlternatives(
+            subject=lines[0],
+            body=u'\n'.join(lines[2:]),
+            to=[email],
+            headers={
+                #'Reply-To': 'TODO something sane',
+                },
+            )
+        message.send()
+
+        self.sent_on = timezone.now()
+        if save:
+            self.save()

@@ -3,10 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import User
-from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template.loader import render_to_string
-from django.utils import timezone
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.http import require_POST
 
@@ -38,23 +35,7 @@ def email_registration_form(request):
         except Registration.DoesNotExist:
             registration = Registration(email=email)
 
-        registration.sent_on = timezone.now()
-        registration.save()
-
-        lines = render_to_string('registration/email_registration_email.txt', {
-            'registration': registration,
-            'url': request.build_absolute_uri(registration.get_absolute_url()),
-            }).splitlines()
-
-        message = EmailMultiAlternatives(
-            subject=lines[0],
-            body=u'\n'.join(lines[2:]),
-            to=[email],
-            headers={
-                #'Reply-To': 'TODO something sane',
-                },
-            )
-        message.send()
+        registration.send_mail()
 
         return render(request, 'registration/email_registration_sent.html', {
             'email': email,
