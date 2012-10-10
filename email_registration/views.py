@@ -47,7 +47,7 @@ def email_registration_form(request):
 
 
 def email_registration_confirm(request, code):
-    code = get_object_or_404(Registration, code=code)
+    registration = get_object_or_404(Registration, code=code)
 
     if request.method == 'POST':
         form = SetPasswordForm(request.user, request.POST)
@@ -57,7 +57,7 @@ def email_registration_confirm(request, code):
             messages.success(request,
                 _('Successfully set the new password.'))
 
-            code.delete()
+            registration.delete()
 
             return redirect('/')
 
@@ -65,23 +65,24 @@ def email_registration_confirm(request, code):
         # We need a known password for the authentication step below
         temporary = generate_code(20)
 
-        if not code.user:
-            code.user = User.objects.create_user(code.email, email=code.email,
-                password=temporary)
+        if not registration.user:
+            registration.user = User.objects.create_user(registration.email,
+                email=registration.email, password=temporary)
 
             messages.success(request,
                 _('Successfully created a new user. Please set a password.'))
 
         else:
-            code.user.set_password(temporary)
-            code.user.save()
+            registration.user.set_password(temporary)
+            registration.user.save()
 
             messages.success(request, _('Please set a password.'))
 
-        user = authenticate(username=code.user.username, password=temporary)
+        user = authenticate(username=registration.user.username,
+            password=temporary)
         login(request, user)
 
-        code.save()
+        registration.save()
 
         form = SetPasswordForm(request.user)
 
