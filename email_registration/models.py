@@ -1,17 +1,10 @@
-import random
-import string
-
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
-
-
-def generate_code(length):
-    return u''.join(random.choice(string.ascii_letters + string.digits)
-        for i in range(length))
 
 
 class Registration(models.Model):
@@ -30,7 +23,7 @@ class Registration(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.code:
-            self.code = generate_code(40)
+            self.code = get_random_string(40)
         super(Registration, self).save(*args, **kwargs)
 
     @models.permalink
