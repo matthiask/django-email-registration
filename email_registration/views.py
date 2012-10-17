@@ -3,11 +3,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
+from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.http import require_POST
 
-from email_registration.models import Registration, generate_code
+from email_registration.utils import get_signer, send_registration_mail
 
 
 class RegistrationForm(forms.Form):
@@ -20,7 +21,8 @@ class RegistrationForm(forms.Form):
         email = self.cleaned_data.get('email')
         if email and User.objects.filter(email=email):
             raise forms.ValidationError(
-_('This e-mail address already exists as an account. Do you want to reset your password?'))
+                _('This e-mail address already exists as an account.'
+                    ' Do you want to reset your password?'))
         return email
 
 
@@ -30,12 +32,7 @@ def email_registration_form(request):
 
     if form.is_valid():
         email = form.cleaned_data['email']
-        try:
-            registration = Registration.objects.get(email=email)
-        except Registration.DoesNotExist:
-            registration = Registration(email=email)
-
-        registration.send_mail(request)
+        send_registration_mail(email, request=request)
 
         return render(request, 'registration/email_registration_sent.html', {
             'email': email,
@@ -47,7 +44,13 @@ def email_registration_form(request):
 
 
 def email_registration_confirm(request, code):
-    registration = get_object_or_404(Registration, code=code)
+    # TODO show error if it fails
+    data = get_signer().unsign(code, max_age=1800)
+    email, sep, user = data.partition(':')
+
+    if user:
+        # TODO show error if it fails
+        user = User.objects.get(pk=user)
 
     if request.method == 'POST':
         form = SetPasswordForm(request.user, request.POST)
@@ -57,32 +60,27 @@ def email_registration_confirm(request, code):
             messages.success(request,
                 _('Successfully set the new password.'))
 
-            registration.delete()
-
             return redirect('/')
 
     else:
         # We need a known password for the authentication step below
-        temporary = generate_code(20)
+        temporary = get_random_string()
 
-        if not registration.user:
-            registration.user = User.objects.create_user(registration.email,
-                email=registration.email, password=temporary)
+        if not user:
+            user = User.objects.create_user(email, email=email,
+                password=temporary)
 
             messages.success(request,
                 _('Successfully created a new user. Please set a password.'))
 
         else:
-            registration.user.set_password(temporary)
-            registration.user.save()
+            user.set_password(temporary)
+            user.save()
 
             messages.success(request, _('Please set a password.'))
 
-        user = authenticate(username=registration.user.username,
-            password=temporary)
+        user = authenticate(username=user.username, password=temporary)
         login(request, user)
-
-        registration.save()
 
         form = SetPasswordForm(request.user)
 
