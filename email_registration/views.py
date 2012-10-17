@@ -46,7 +46,7 @@ def email_registration_form(request):
 def email_registration_confirm(request, code):
     # TODO show error if it fails
     data = get_signer().unsign(code, max_age=1800)
-    email, sep, user = data.partition(':')
+    email, sep, user = data.partition('-')
 
     if user:
         # TODO show error if it fails

@@ -8,13 +8,14 @@ def get_signer():
     return signing.TimestampSigner(salt='email_registration')
 
 
-def send_registration_mail(email, user_pk=None, request=None):
+def send_registration_mail(email, user=None, request=None):
     url = reverse('email_registration_confirm', kwargs={
-        'code': get_signer().sign(u'%s-%s' % (email, user_pk or '')),
+        'code': get_signer().sign(u'%s-%s' % (email, user.id if user else '')),
         })
 
-    if request:
-        url = request.build_absolute_uri(url)
+    url = request.build_absolute_uri(url)
+    # TODO else: use django.contrib.sites or, it that does not exist either,
+    # raise an exception
 
     lines = render_to_string('registration/email_registration_email.txt', {
         'url': url,
