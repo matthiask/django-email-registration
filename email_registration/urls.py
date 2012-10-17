@@ -5,7 +5,7 @@ urlpatterns = patterns('email_registration.views',
     url(r'^$',
         'email_registration_form',
         name='email_registration_form'),
-    url(r'^confirm/(?P<code>[^/]+)/$',
+    url(r'^(?P<code>[^/]+)/$',
         'email_registration_confirm',
         name='email_registration_confirm'),
 )
