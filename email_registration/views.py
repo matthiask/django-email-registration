@@ -23,7 +23,7 @@ class RegistrationForm(forms.Form):
         if email and User.objects.filter(email=email).exists():
             raise forms.ValidationError(
                 _('This e-mail address already exists as an account.'
-                    ' Do you want to reset your password?'))
+                    ' Did you want to reset your password?'))
         return email
 
 
