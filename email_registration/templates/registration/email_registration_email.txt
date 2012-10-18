@@ -4,4 +4,7 @@ Click the following link to activate your account:
 
 {{ url }}
 
+Please note that this link is only active for 30 minutes. If you
+wait longer, you'll have to request another registration link.
+
 Warm regards
