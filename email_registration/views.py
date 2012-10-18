@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import User
+from django.core.signing import BadSignature, SignatureExpired
 from django.shortcuts import redirect, render
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -44,13 +45,29 @@ def email_registration_form(request):
 
 
 def email_registration_confirm(request, code):
-    # TODO show error if it fails
-    data = get_signer().unsign(code, max_age=1800)
-    email, sep, user = data.partition('-')
+    try:
+        data = get_signer().unsign(code, max_age=1800)
+    except SignatureExpired:
+        messages.error(request, _('The link is expired. Please request another'
+            ' registration link.'))
+        return redirect('/')
 
-    if user:
-        # TODO show error if it fails
-        user = User.objects.get(pk=user)
+    except BadSignature:
+        messages.error(request, _('Unable to verify the signature. Please'
+            ' request a new registration link.'))
+        return redirect('/')
+
+    parts = data.rsplit('-', 1)
+    email = parts[0]
+    if len(parts) == 2 and parts[1]:
+        try:
+            user = User.objects.get(pk=parts[1])
+        except (User.DoesNotExist, TypeError, ValueError):
+            messages.error(request, _('Something went wrong while decoding the'
+                ' registration request. Please try again.'))
+            return redirect('/')
+    else:
+        user = None
 
     if request.method == 'POST':
         form = SetPasswordForm(request.user, request.POST)
