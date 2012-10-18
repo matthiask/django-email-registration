@@ -20,7 +20,7 @@ class RegistrationForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if email and User.objects.filter(email=email):
+        if email and User.objects.filter(email=email).exists():
             raise forms.ValidationError(
                 _('This e-mail address already exists as an account.'
                     ' Do you want to reset your password?'))
