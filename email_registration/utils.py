@@ -1,3 +1,4 @@
+from django.contrib.sites.models import get_current_site
 from django.core import signing
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
@@ -13,9 +14,10 @@ def send_registration_mail(email, request, user=None):
         'code': get_signer().sign(u'%s-%s' % (email, user.id if user else '')),
         })
 
-    url = request.build_absolute_uri(url)
-    # TODO else: use django.contrib.sites or, it that does not exist either,
-    # raise an exception
+    url = '%s://%s%s' % (
+        request.is_secure() and 'https' or 'http',
+        get_current_site(request).domain,
+        url)
 
     lines = render_to_string('registration/email_registration_email.txt', {
         'url': url,
