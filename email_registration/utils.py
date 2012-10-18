@@ -8,7 +8,7 @@ def get_signer():
     return signing.TimestampSigner(salt='email_registration')
 
 
-def send_registration_mail(email, user=None, request=None):
+def send_registration_mail(email, request, user=None):
     url = reverse('email_registration_confirm', kwargs={
         'code': get_signer().sign(u'%s-%s' % (email, user.id if user else '')),
         })

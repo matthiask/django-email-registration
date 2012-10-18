@@ -33,7 +33,7 @@ def email_registration_form(request):
 
     if form.is_valid():
         email = form.cleaned_data['email']
-        send_registration_mail(email, request=request)
+        send_registration_mail(email, request)
 
         return render(request, 'registration/email_registration_sent.html', {
             'email': email,
