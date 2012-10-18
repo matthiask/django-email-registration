@@ -66,18 +66,16 @@ def email_registration_confirm(request, code):
         # We need a known password for the authentication step below
         temporary = get_random_string()
 
-        if not user:
-            user = User.objects.create_user(email, email=email,
-                password=temporary)
-
-            messages.success(request,
-                _('Successfully created a new user. Please set a password.'))
-
-        else:
+        if user:
             user.set_password(temporary)
             user.save()
-
             messages.success(request, _('Please set a password.'))
+
+        else:
+            user = User.objects.create_user(email, email=email,
+                password=temporary)
+            messages.success(request,
+                _('Successfully created a new user. Please set a password.'))
 
         user = authenticate(username=user.username, password=temporary)
         login(request, user)
