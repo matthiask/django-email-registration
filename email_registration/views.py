@@ -72,8 +72,16 @@ def email_registration_confirm(request, code):
             messages.success(request, _('Please set a password.'))
 
         else:
-            user = User.objects.create_user(email, email=email,
-                password=temporary)
+            try:
+                # When the user visits this page more than once, the user
+                # instance already exists in the database
+                user = User.objects.get(username=email)
+                user.set_password(temporary)
+                user.save()
+            except User.DoesNotExist:
+                user = User.objects.create_user(email, email=email,
+                    password=temporary)
+
             messages.success(request,
                 _('Successfully created a new user. Please set a password.'))
 
