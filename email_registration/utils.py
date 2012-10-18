@@ -3,7 +3,7 @@ from django.contrib.sites.models import get_current_site
 from django.core import signing
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
-from django.template.loader import render_to_string
+from django.template.loader import TemplateDoesNotExist, render_to_string
 from django.utils.translation import ugettext as _
 
 
@@ -21,19 +21,11 @@ def send_registration_mail(email, request, user=None):
         get_current_site(request).domain,
         url)
 
-    lines = render_to_string('registration/email_registration_email.txt', {
+    render_to_mail('registration/email_registration_email', {
         'url': url,
-        }).splitlines()
-
-    message = EmailMultiAlternatives(
-        subject=lines[0],
-        body=u'\n'.join(lines[2:]),
+        },
         to=[email],
-        headers={
-            #'Reply-To': 'TODO something sane',
-            },
-        )
-    message.send()
+        ).send()
 
 
 class InvalidCode(Exception):
@@ -66,3 +58,21 @@ def decode(code):
         user = None
 
     return email, user
+
+
+def render_to_mail(template, context, **kwargs):
+    lines = render_to_string('%s.txt' % template, context).splitlines()
+
+    message = EmailMultiAlternatives(
+        subject=lines[0],
+        body=u'\n'.join(lines[2:]),
+        **kwargs)
+
+    try:
+        message.attach_alternative(
+            render_to_string('%s.html' % template, context),
+            'text/html')
+    except TemplateDoesNotExist:
+        pass
+
+    return message
