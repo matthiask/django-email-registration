@@ -1,8 +1,10 @@
+from django.contrib.auth.models import User
 from django.contrib.sites.models import get_current_site
 from django.core import signing
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
+from django.utils.translation import ugettext as _
 
 
 def get_signer():
@@ -32,3 +34,35 @@ def send_registration_mail(email, request, user=None):
             },
         )
     message.send()
+
+
+class InvalidCode(Exception):
+    pass
+
+
+def decode(code):
+    try:
+        data = get_signer().unsign(code, max_age=1800)
+    except signing.SignatureExpired:
+        raise InvalidCode(
+            _('The link is expired. Please request another registration link.')
+            )
+
+    except signing.BadSignature:
+        raise InvalidCode(
+            _('Unable to verify the signature. Please request a new'
+                ' registration link.'))
+
+    parts = data.rsplit('-', 1)
+    email = parts[0]
+    if len(parts) == 2 and parts[1]:
+        try:
+            user = User.objects.get(pk=parts[1])
+        except (User.DoesNotExist, TypeError, ValueError):
+            raise InvalidCode(
+                _('Something went wrong while decoding the'
+                    ' registration request. Please try again.'))
+    else:
+        user = None
+
+    return email, user

@@ -3,13 +3,13 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import User
-from django.core.signing import BadSignature, SignatureExpired
 from django.shortcuts import redirect, render
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.http import require_POST
 
-from email_registration.utils import get_signer, send_registration_mail
+from email_registration.utils import (InvalidCode, decode,
+    send_registration_mail)
 
 
 class RegistrationForm(forms.Form):
@@ -29,6 +29,7 @@ class RegistrationForm(forms.Form):
 
 @require_POST
 def email_registration_form(request):
+    # TODO unajaxify this view for the release?
     form = RegistrationForm(request.POST)
 
     if form.is_valid():
@@ -46,28 +47,10 @@ def email_registration_form(request):
 
 def email_registration_confirm(request, code):
     try:
-        data = get_signer().unsign(code, max_age=1800)
-    except SignatureExpired:
-        messages.error(request, _('The link is expired. Please request another'
-            ' registration link.'))
+        email, user = decode(code)
+    except InvalidCode as exc:
+        messages.error(request, exc[0])
         return redirect('/')
-
-    except BadSignature:
-        messages.error(request, _('Unable to verify the signature. Please'
-            ' request a new registration link.'))
-        return redirect('/')
-
-    parts = data.rsplit('-', 1)
-    email = parts[0]
-    if len(parts) == 2 and parts[1]:
-        try:
-            user = User.objects.get(pk=parts[1])
-        except (User.DoesNotExist, TypeError, ValueError):
-            messages.error(request, _('Something went wrong while decoding the'
-                ' registration request. Please try again.'))
-            return redirect('/')
-    else:
-        user = None
 
     if request.method == 'POST':
         form = SetPasswordForm(request.user, request.POST)
