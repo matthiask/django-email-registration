@@ -7,12 +7,12 @@ from django.template.loader import TemplateDoesNotExist, render_to_string
 from django.utils.translation import ugettext as _
 
 
-def get_signer():
+def get_signer(salt='email_registration'):
     """
     Returns the signer instance used to sign and unsign the registration
     link tokens
     """
-    return signing.TimestampSigner(salt='email_registration')
+    return signing.TimestampSigner(salt=salt)
 
 
 def send_registration_mail(email, request, user=None):
