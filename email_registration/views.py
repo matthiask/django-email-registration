@@ -28,9 +28,9 @@ class RegistrationForm(forms.Form):
 
 
 @require_POST
-def email_registration_form(request):
+def email_registration_form(request, form_class=RegistrationForm):
     # TODO unajaxify this view for the release?
-    form = RegistrationForm(request.POST)
+    form = form_class(request.POST)
 
     if form.is_valid():
         email = form.cleaned_data['email']
