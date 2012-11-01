@@ -114,12 +114,17 @@ def render_to_mail(template, context, **kwargs):
         message = render_to_mail('myproject/hello_mail', {}, to=[email])
         message.send()
     """
-    lines = render_to_string('%s.txt' % template, context).splitlines()
+    lines = iter(render_to_string('%s.txt' % template, context).splitlines())
 
-    message = EmailMultiAlternatives(
-        subject=lines[0],
-        body=u'\n'.join(lines[2:]),
-        **kwargs)
+    subject = u''
+    while True:
+        line = next(lines)
+        if line:
+            subject = line
+            break
+
+    body = u'\n'.join(lines).strip('\n')
+    message = EmailMultiAlternatives(subject=subject, body=body, **kwargs)
 
     try:
         message.attach_alternative(
