@@ -16,7 +16,7 @@ class RegistrationForm(forms.Form):
     email = forms.EmailField(label=ugettext_lazy('e-mail address'),
         widget=forms.TextInput(attrs={
             'placeholder': ugettext_lazy('e-mail address'),
-            }))
+            }), max_length=75)
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
