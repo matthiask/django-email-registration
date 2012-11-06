@@ -79,7 +79,9 @@ def email_registration_confirm(request, code):
                 user.set_password(temporary)
                 user.save()
             except User.DoesNotExist:
-                user = User.objects.create_user(email, email=email,
+                user = User.objects.create_user(
+                    email if len(email) <= 30 else get_random_string(25),
+                    email=email,
                     password=temporary)
 
             messages.success(request,
