@@ -7,6 +7,7 @@ from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.http import require_POST
 
+from email_registration.signals import password_set
 from email_registration.utils import (InvalidCode, decode,
     send_registration_mail)
 
@@ -54,7 +55,14 @@ def email_registration_confirm(request, code):
     if request.method == 'POST':
         form = SetPasswordForm(request.user, request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+
+            password_set.send(
+                sender=user.__class__,
+                request=request,
+                user=user,
+                password=form.cleaned_data.get('new_password1'),
+                )
 
             messages.success(request,
                 _('Successfully set the new password.'))
