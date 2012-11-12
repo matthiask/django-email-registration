@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
@@ -86,9 +85,6 @@ def email_registration_confirm(request, code):
 
             messages.success(request,
                 _('Successfully created a new user. Please set a password.'))
-
-        user = authenticate(username=user.username, password=temporary)
-        login(request, user)
 
         form = SetPasswordForm(request.user)
 
