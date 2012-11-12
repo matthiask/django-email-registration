@@ -1,8 +1,11 @@
+from datetime import timedelta
+
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.http import require_POST
@@ -52,8 +55,19 @@ def email_registration_confirm(request, code):
         messages.error(request, exc[0])
         return redirect('/')
 
+    if not user:
+        if User.objects.filter(email=email).exists():
+            messages.error(request,
+                _('This e-mail address already exists as an account.'
+                    ' Did you want to reset your password?'))
+            return redirect('/')
+
+        user = User(
+            username=email if len(email) <= 30 else get_random_string(25),
+            email=email)
+
     if request.method == 'POST':
-        form = SetPasswordForm(request.user, request.POST)
+        form = SetPasswordForm(user, request.POST)
         if form.is_valid():
             user = form.save()
 
@@ -65,36 +79,13 @@ def email_registration_confirm(request, code):
                 )
 
             messages.success(request,
-                _('Successfully set the new password.'))
+                _('Successfully set the new password. Please login now.'))
 
-            return redirect('/')
+            return redirect('login')
 
     else:
-        # We need a known password for the authentication step below
-        temporary = get_random_string()
-
-        if user:
-            user.set_password(temporary)
-            user.save()
-            messages.success(request, _('Please set a password.'))
-
-        else:
-            try:
-                # When the user visits this page more than once, the user
-                # instance already exists in the database
-                user = User.objects.get(username=email)
-                user.set_password(temporary)
-                user.save()
-            except User.DoesNotExist:
-                user = User.objects.create_user(
-                    email if len(email) <= 30 else get_random_string(25),
-                    email=email,
-                    password=temporary)
-
-            messages.success(request,
-                _('Successfully created a new user. Please set a password.'))
-
-        form = SetPasswordForm(request.user)
+        messages.success(request, _('Please set a password.'))
+        form = SetPasswordForm(user)
 
     return render(request, 'registration/password_set_form.html', {
         'form': form,

@@ -4,6 +4,7 @@ from django.core import signing
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.template.loader import TemplateDoesNotExist, render_to_string
+from django.utils.http import int_to_base36, base36_to_int
 from django.utils.translation import ugettext as _
 
 
@@ -35,8 +36,14 @@ def send_registration_mail(email, request, user=None):
       version of the mail. This template is **NOT** available by default and
       is not required either.
     """
+
+    code = [email, '', '']
+    if user:
+        code[1] = str(user.id)
+        code[2] = int_to_base36(int(user.last_login.strftime('%s')))
+
     url = reverse('email_registration_confirm', kwargs={
-        'code': get_signer().sign(u'%s-%s' % (email, user.id if user else '')),
+        'code': get_signer().sign(u':'.join(code)),
         })
 
     url = '%s://%s%s' % (
@@ -77,15 +84,24 @@ def decode(code, max_age=1800):
             _('Unable to verify the signature. Please request a new'
                 ' registration link.'))
 
-    parts = data.rsplit('-', 1)
-    email = parts[0]
-    if len(parts) == 2 and parts[1]:
+    parts = data.rsplit(':', 2)
+    if len(parts) != 3:
+        raise InvalidCode(
+            _('Something went wrong while decoding the'
+                ' registration request. Please try again.'))
+
+    email, uid, timestamp = parts
+    if uid and timestamp:
         try:
-            user = User.objects.get(pk=parts[1])
+            user = User.objects.get(pk=uid)
         except (User.DoesNotExist, TypeError, ValueError):
             raise InvalidCode(
                 _('Something went wrong while decoding the'
                     ' registration request. Please try again.'))
+
+        if timestamp != int_to_base36(int(user.last_login.strftime('%s'))):
+            raise InvalidCode(_('The link has already been used.'))
+
     else:
         user = None
 
