@@ -48,9 +48,9 @@ def email_registration_form(request, form_class=RegistrationForm):
         })
 
 
-def email_registration_confirm(request, code):
+def email_registration_confirm(request, code, max_age=1800):
     try:
-        email, user = decode(code)
+        email, user = decode(code, max_age=max_age)
     except InvalidCode as exc:
         messages.error(request, exc[0])
         return redirect('/')
