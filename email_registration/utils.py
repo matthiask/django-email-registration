@@ -63,7 +63,7 @@ class InvalidCode(Exception):
     pass
 
 
-def decode(code, max_age=1800):
+def decode(code, max_age=3 * 86400):
     """
     Decodes the code from the registration link and returns a tuple consisting
     of the verified email address and the associated user instance or ``None``

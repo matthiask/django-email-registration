@@ -48,7 +48,7 @@ def email_registration_form(request, form_class=RegistrationForm):
         })
 
 
-def email_registration_confirm(request, code, max_age=1800):
+def email_registration_confirm(request, code, max_age=3 * 86400):
     try:
         email, user = decode(code, max_age=max_age)
     except InvalidCode as exc:
