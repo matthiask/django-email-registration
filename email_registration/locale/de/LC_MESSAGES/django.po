@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-18 11:12+0200\n"
+"POT-Creation-Date: 2013-05-23 16:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,46 +18,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: utils.py:72
+#: utils.py:79
 msgid "The link is expired. Please request another registration link."
 msgstr "Der Link ist verfallen. Bitte beantragen Sie einen neuen Link."
 
-#: utils.py:77
+#: utils.py:84
 msgid "Unable to verify the signature. Please request a new registration link."
-msgstr "Konnte die Signatur nicht verifizieren. Bitte beantragen Sie einen "
-"neuen Link."
+msgstr ""
+"Konnte die Signatur nicht verifizieren. Bitte beantragen Sie einen neuen "
+"Link."
 
-#: utils.py:87
+#: utils.py:90 utils.py:99
 msgid ""
 "Something went wrong while decoding the registration request. Please try "
 "again."
 msgstr "Etwas ist schiefgelaufen. Bitte versuchen Sie es nochmals."
 
-#: views.py:16 views.py:18
+#: utils.py:103
+msgid "The link has already been used."
+msgstr "Der Link wurde schon verwendet."
+
+#: views.py:19 views.py:21
 msgid "e-mail address"
 msgstr "Emailadresse"
 
-#: views.py:25
+#: views.py:28 views.py:61
 msgid ""
 "This e-mail address already exists as an account. Did you want to reset your "
 "password?"
-msgstr "Die Emailadresse existiert schon im System. Wollten Sie Ihr Passwort "
+msgstr ""
+"Die Emailadresse existiert schon im System. Wollten Sie Ihr Passwort "
 "zurücksetzen?"
 
-#: views.py:61
-msgid "Successfully set the new password."
-msgstr "Das neue Passwort wurde erfolgreich gesetzt."
+#: views.py:82
+msgid "Successfully set the new password. Please login now."
+msgstr "Das neue Passwort wurde erfolgreich gesetzt. Sie können sich jetzt anmelden."
 
-#: views.py:72
+#: views.py:87
 msgid "Please set a password."
 msgstr "Bitte setzen Sie ein neues Passwort."
 
-#: views.py:86
-msgid "Successfully created a new user. Please set a password."
-msgstr "Ein Nutzer wurde erfolgreich erstellt. Bitte setzen Sie ein Passwort."
-
-#: templates/registration/email_registration_form.html:10
-#: templates/registration/email_registration_include.html:10
+#: templates/registration/email_registration_form.html:11
+#: templates/registration/email_registration_include.html:11
 msgid "Register"
 msgstr "Registrieren"
 
@@ -79,3 +81,7 @@ msgstr ""
 #: templates/registration/password_set_form.html:21
 msgid "Set password"
 msgstr "Passwort setzen"
+
+#~ msgid "Successfully created a new user. Please set a password."
+#~ msgstr ""
+#~ "Ein Nutzer wurde erfolgreich erstellt. Bitte setzen Sie ein Passwort."
