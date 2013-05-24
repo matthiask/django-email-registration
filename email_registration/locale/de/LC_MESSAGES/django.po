@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-23 16:43+0200\n"
+"POT-Creation-Date: 2013-05-24 08:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,12 +39,12 @@ msgid "The link has already been used."
 msgstr "Der Link wurde schon verwendet."
 
 #: views.py:19 views.py:21
-msgid "e-mail address"
+msgid "email address"
 msgstr "Emailadresse"
 
 #: views.py:28 views.py:61
 msgid ""
-"This e-mail address already exists as an account. Did you want to reset your "
+"This email address already exists as an account. Did you want to reset your "
 "password?"
 msgstr ""
 "Die Emailadresse existiert schon im System. Wollten Sie Ihr Passwort "
@@ -52,7 +52,8 @@ msgstr ""
 
 #: views.py:82
 msgid "Successfully set the new password. Please login now."
-msgstr "Das neue Passwort wurde erfolgreich gesetzt. Sie können sich jetzt anmelden."
+msgstr ""
+"Das neue Passwort wurde erfolgreich gesetzt. Sie können sich jetzt anmelden."
 
 #: views.py:87
 msgid "Please set a password."
@@ -64,13 +65,13 @@ msgid "Register"
 msgstr "Registrieren"
 
 #: templates/registration/email_registration_include.html:7
-msgid "E-mail address"
+msgid "Email address"
 msgstr "Emailadresse"
 
 #: templates/registration/email_registration_sent.html:3
 #, python-format
 msgid ""
-"We sent you an e-mail to %(email)s.\n"
+"We sent you an email to %(email)s.\n"
 "  Please click the contained link to finish your registration."
 msgstr ""
 "Wir haben ein Email an %(email)s verschickt. Bitte besuchen Sie den darin "

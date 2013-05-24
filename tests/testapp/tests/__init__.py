@@ -24,7 +24,7 @@ class RegistrationTest(TestCase):
             'email': 'test@example.com',
             })
         self.assertContains(response,
-            'We sent you an e-mail to test@example.com.')
+            'We sent you an email to test@example.com.')
 
         self.assertEqual(len(mail.outbox), 1)
         body = mail.outbox[0].body

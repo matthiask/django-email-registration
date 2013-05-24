@@ -23,7 +23,7 @@ Twitter Bootstrap.
       {% csrf_token %}
       <div class="controls">
         <input id="id_email" type="text" name="email" maxlength="30"
-          placeholder="{% trans "E-mail address" %}">
+          placeholder="{% trans "Email address" %}">
       </div>
       <button type="submit" class="btn btn-primary">
         {% trans "Register" %}</button>

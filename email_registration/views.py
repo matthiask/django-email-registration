@@ -16,16 +16,16 @@ from email_registration.utils import (InvalidCode, decode,
 
 
 class RegistrationForm(forms.Form):
-    email = forms.EmailField(label=ugettext_lazy('e-mail address'),
+    email = forms.EmailField(label=ugettext_lazy('email address'),
         widget=forms.TextInput(attrs={
-            'placeholder': ugettext_lazy('e-mail address'),
+            'placeholder': ugettext_lazy('email address'),
             }), max_length=75)
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email and User.objects.filter(email=email).exists():
             raise forms.ValidationError(
-                _('This e-mail address already exists as an account.'
+                _('This email address already exists as an account.'
                     ' Did you want to reset your password?'))
         return email
 
@@ -58,7 +58,7 @@ def email_registration_confirm(request, code, max_age=3 * 86400):
     if not user:
         if User.objects.filter(email=email).exists():
             messages.error(request,
-                _('This e-mail address already exists as an account.'
+                _('This email address already exists as an account.'
                     ' Did you want to reset your password?'))
             return redirect('/')
 
