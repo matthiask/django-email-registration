@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-24 08:49+0200\n"
+"POT-Creation-Date: 2013-06-10 12:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,6 +58,26 @@ msgstr ""
 #: views.py:87
 msgid "Please set a password."
 msgstr "Bitte setzen Sie ein neues Passwort."
+
+#: templates/registration/email_registration_email.txt:2
+msgid "Registration link"
+msgstr "Registrierungslink"
+
+#: templates/registration/email_registration_email.txt:4
+msgid "Click the following link to activate your account:"
+msgstr "Besuchen Sie den folgenden Link um Ihr Konto zu aktivieren:"
+
+#: templates/registration/email_registration_email.txt:8
+msgid ""
+"Please note that this link expires after 3 days. If you wait\n"
+"longer, you'll have to request another registration link."
+msgstr ""
+"Dieser Link ist nur 3 Tage gültig. Wenn Sie länger warten,\n"
+"müssen Sie einen neuen Link anfordern."
+
+#: templates/registration/email_registration_email.txt:11
+msgid "Best regards"
+msgstr "Freundliche Grüsse"
 
 #: templates/registration/email_registration_form.html:11
 #: templates/registration/email_registration_include.html:11

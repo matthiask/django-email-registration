@@ -1,10 +1,11 @@
-Registration link
+{% load i18n %}
+{% trans "Registration link" %}
 
-Click the following link to activate your account:
+{% trans "Click the following link to activate your account:" %}
 
 {{ url }}
 
-Please note that this link expires after 3 days. If you wait longer,
-you'll have to request another registration link.
+{% blocktrans %}Please note that this link expires after 3 days. If you wait
+longer, you'll have to request another registration link.{% endblocktrans %}
 
-Warm regards
+{% trans "Best regards" %}
