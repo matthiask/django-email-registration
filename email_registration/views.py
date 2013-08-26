@@ -1,11 +1,8 @@
-from datetime import timedelta
-
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
-from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.http import require_POST

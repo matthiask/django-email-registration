@@ -9,7 +9,8 @@ packages, package_data = setuplib.find_packages('email_registration')
 setup(name='django-email-registration',
     version=__import__('email_registration').__version__,
     description='So simple you\'ll burst into tears right away.',
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
+    long_description=open(
+        os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     author='Matthias Kestenholz',
     author_email='mk@406.ch',
     url='http://github.com/matthiask/django-email-registration/',

@@ -1,15 +1,11 @@
-from datetime import timedelta
 import httplib
 import re
 
 from django.contrib.auth.models import User
 from django.core import mail
-from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import RequestFactory
-from django.utils import timezone
 
-from email_registration.signals import password_set
 from email_registration.utils import send_registration_mail
 
 
