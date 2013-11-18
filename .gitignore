@@ -11,3 +11,4 @@
 /dist
 /django_email_registration.egg-info
 /tests/venv
+.tox
