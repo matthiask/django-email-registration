@@ -6,6 +6,9 @@ The eleventy-eleventh email registration app for Django.
 
 But this one does not feed your cat.
 
+.. image:: https://travis-ci.org/matthiask/django-email-registration.png?branch=master
+   :target: https://travis-ci.org/matthiask/django-email-registration
+
 
 Usage
 =====
