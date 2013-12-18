@@ -8,22 +8,25 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.http import require_POST
 
 from email_registration.signals import password_set
-from email_registration.utils import (InvalidCode, decode,
-    send_registration_mail)
+from email_registration.utils import (
+    InvalidCode, decode, send_registration_mail)
 
 
 class RegistrationForm(forms.Form):
-    email = forms.EmailField(label=ugettext_lazy('email address'),
+    email = forms.EmailField(
+        label=ugettext_lazy('email address'),
+        max_length=75,
         widget=forms.TextInput(attrs={
             'placeholder': ugettext_lazy('email address'),
-            }), max_length=75)
+        }),
+    )
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email and User.objects.filter(email=email).exists():
-            raise forms.ValidationError(
-                _('This email address already exists as an account.'
-                    ' Did you want to reset your password?'))
+            raise forms.ValidationError(_(
+                'This email address already exists as an account.'
+                ' Did you want to reset your password?'))
         return email
 
 
@@ -38,11 +41,11 @@ def email_registration_form(request, form_class=RegistrationForm):
 
         return render(request, 'registration/email_registration_sent.html', {
             'email': email,
-            })
+        })
 
     return render(request, 'registration/email_registration_form.html', {
         'form': form,
-        })
+    })
 
 
 def email_registration_confirm(request, code, max_age=3 * 86400):
@@ -54,9 +57,9 @@ def email_registration_confirm(request, code, max_age=3 * 86400):
 
     if not user:
         if User.objects.filter(email=email).exists():
-            messages.error(request,
-                _('This email address already exists as an account.'
-                    ' Did you want to reset your password?'))
+            messages.error(request, _(
+                'This email address already exists as an account.'
+                ' Did you want to reset your password?'))
             return redirect('/')
 
         user = User(
@@ -73,10 +76,10 @@ def email_registration_confirm(request, code, max_age=3 * 86400):
                 request=request,
                 user=user,
                 password=form.cleaned_data.get('new_password1'),
-                )
+            )
 
-            messages.success(request,
-                _('Successfully set the new password. Please login now.'))
+            messages.success(request, _(
+                'Successfully set the new password. Please login now.'))
 
             return redirect('login')
 

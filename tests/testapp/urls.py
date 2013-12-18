@@ -7,7 +7,8 @@ from django.http import HttpResponse
 admin.autodiscover()
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', lambda request: HttpResponse(repr(request.REQUEST))),
     url(r'^ac/', include('django.contrib.auth.urls')),
