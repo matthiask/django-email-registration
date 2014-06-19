@@ -24,7 +24,7 @@ class RegistrationForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email and User.objects.filter(email=email).exists():
-            raise forms.ValidationError(_(
+            raise self.error_class(_(
                 'This email address already exists as an account.'
                 ' Did you want to reset your password?'))
         return email
@@ -89,4 +89,4 @@ def email_registration_confirm(request, code, max_age=3 * 86400):
 
     return render(request, 'registration/password_set_form.html', {
         'form': form,
-        })
+    })

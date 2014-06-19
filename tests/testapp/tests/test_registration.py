@@ -18,9 +18,10 @@ class RegistrationTest(TestCase):
 
         response = self.client.post('/er/', {
             'email': 'test@example.com',
-            })
+        })
         self.assertContains(
-            response, 'We sent you an email to test@example.com.')
+            response,
+            'We sent you an email to test@example.com.')
 
         self.assertEqual(len(mail.outbox), 1)
         body = mail.outbox[0].body
@@ -35,7 +36,7 @@ class RegistrationTest(TestCase):
         response = self.client.post(url, {
             'new_password1': 'pass',
             'new_password2': 'pass',
-            })
+        })
         self.assertRedirects(response, '/ac/login/')
 
         user = User.objects.get()
@@ -46,13 +47,13 @@ class RegistrationTest(TestCase):
         response = self.client.post('/ac/login/', {
             'username': 'test@example.com',
             'password': 'pass',
-            })
+        })
         self.assertRedirects(response, '/?login=1')
 
     def test_existing_user(self):
         user = User.objects.create(
             username='test',
-            )
+        )
 
         request = RequestFactory().get('/')
         send_registration_mail('test@example.com', request, user=user)
@@ -73,7 +74,7 @@ class RegistrationTest(TestCase):
         response = self.client.post(url, {
             'new_password1': 'pass',
             'new_password2': 'pass',
-            })
+        })
         self.assertRedirects(response, '/ac/login/')
 
         user = User.objects.get()
