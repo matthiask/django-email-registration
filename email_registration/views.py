@@ -24,7 +24,7 @@ class RegistrationForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email and User.objects.filter(email=email).exists():
-            raise self.error_class(_(
+            raise forms.ValidationError(_(
                 'This email address already exists as an account.'
                 ' Did you want to reset your password?'))
         return email

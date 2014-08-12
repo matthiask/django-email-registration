@@ -81,3 +81,16 @@ class RegistrationTest(TestCase):
         self.assertEqual(user.username, 'test')
         self.assertEqual(user.email, '')
         self.assertTrue(user.check_password('pass'))
+
+    def test_already_existing_email(self):
+            user = User.objects.create(
+                username='test@example.com',
+                email='test@example.com',
+            )
+            response = self.client.post('/er/', {
+                'email': user.email,
+            })
+            self.assertContains(
+                response,
+                'Did you want to reset your password?',
+                status_code=200)
