@@ -16,6 +16,15 @@ def get_signer(salt='email_registration'):
     return signing.TimestampSigner(salt=salt)
 
 
+def get_last_login_timestamp(user):
+    """
+    Django 1.7 allows the `last_login` timestamp to be `None` for new users.
+    """
+    if user.last_login is not None:
+        return int(user.last_login.strftime('%s'))
+    return 0
+
+
 def send_registration_mail(email, request, user=None):
     """
     Sends the registration mail
@@ -40,7 +49,7 @@ def send_registration_mail(email, request, user=None):
     code = [email, '', '']
     if user:
         code[1] = str(user.id)
-        code[2] = int_to_base36(int(user.last_login.strftime('%s')))
+        code[2] = int_to_base36(get_last_login_timestamp(user))
 
     url = reverse('email_registration_confirm', kwargs={
         'code': get_signer().sign(u':'.join(code)),
@@ -99,7 +108,7 @@ def decode(code, max_age=3 * 86400):
                 _('Something went wrong while decoding the'
                     ' registration request. Please try again.'))
 
-        if timestamp != int_to_base36(int(user.last_login.strftime('%s'))):
+        if timestamp != int_to_base36(get_last_login_timestamp(user)):
             raise InvalidCode(_('The link has already been used.'))
 
     else:
