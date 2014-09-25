@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.contrib.sites.models import get_current_site
 from django.core import signing
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
@@ -51,20 +50,20 @@ def send_registration_mail(email, request, user=None):
         code[1] = str(user.id)
         code[2] = int_to_base36(get_last_login_timestamp(user))
 
-    url = reverse('email_registration_confirm', kwargs={
-        'code': get_signer().sign(u':'.join(code)),
-        })
+    url = request.build_absolute_uri(
+        reverse(
+            'email_registration_confirm',
+            kwargs={
+                'code': get_signer().sign(u':'.join(code)),
+            }))
 
-    url = '%s://%s%s' % (
-        request.is_secure() and 'https' or 'http',
-        get_current_site(request).domain,
-        url)
-
-    render_to_mail('registration/email_registration_email', {
-        'url': url,
+    render_to_mail(
+        'registration/email_registration_email',
+        {
+            'url': url,
         },
         to=[email],
-        ).send()
+    ).send()
 
 
 class InvalidCode(Exception):
@@ -84,29 +83,28 @@ def decode(code, max_age=3 * 86400):
     try:
         data = get_signer().unsign(code, max_age=max_age)
     except signing.SignatureExpired:
-        raise InvalidCode(
-            _('The link is expired. Please request another registration link.')
-            )
+        raise InvalidCode(_(
+            'The link is expired. Please request another registration link.'))
 
     except signing.BadSignature:
-        raise InvalidCode(
-            _('Unable to verify the signature. Please request a new'
-                ' registration link.'))
+        raise InvalidCode(_(
+            'Unable to verify the signature. Please request a new'
+            ' registration link.'))
 
     parts = data.rsplit(':', 2)
     if len(parts) != 3:
-        raise InvalidCode(
-            _('Something went wrong while decoding the'
-                ' registration request. Please try again.'))
+        raise InvalidCode(_(
+            'Something went wrong while decoding the'
+            ' registration request. Please try again.'))
 
     email, uid, timestamp = parts
     if uid and timestamp:
         try:
             user = User.objects.get(pk=uid)
         except (User.DoesNotExist, TypeError, ValueError):
-            raise InvalidCode(
-                _('Something went wrong while decoding the'
-                    ' registration request. Please try again.'))
+            raise InvalidCode(_(
+                'Something went wrong while decoding the'
+                ' registration request. Please try again.'))
 
         if timestamp != int_to_base36(get_last_login_timestamp(user)):
             raise InvalidCode(_('The link has already been used.'))
