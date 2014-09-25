@@ -52,7 +52,7 @@ def email_registration_confirm(request, code, max_age=3 * 86400):
     try:
         email, user = decode(code, max_age=max_age)
     except InvalidCode as exc:
-        messages.error(request, exc[0])
+        messages.error(request, '%s' % exc)
         return redirect('/')
 
     if not user:

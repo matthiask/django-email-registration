@@ -19,9 +19,7 @@ def get_last_login_timestamp(user):
     """
     Django 1.7 allows the `last_login` timestamp to be `None` for new users.
     """
-    if user.last_login is not None:
-        return int(user.last_login.strftime('%s'))
-    return 0
+    return int(user.last_login.strftime('%s')) if user.last_login else 0
 
 
 def send_registration_mail(email, request, user=None):
