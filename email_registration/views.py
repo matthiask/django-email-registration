@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import SetPasswordForm
-from django.contrib.auth.models import User
+from django.db.models.fields import FieldDoesNotExist
 from django.shortcuts import redirect, render
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -10,6 +11,8 @@ from django.views.decorators.http import require_POST
 from email_registration.signals import password_set
 from email_registration.utils import (
     InvalidCode, decode, send_registration_mail)
+
+User = get_user_model()
 
 
 class RegistrationForm(forms.Form):
@@ -62,9 +65,30 @@ def email_registration_confirm(request, code, max_age=3 * 86400):
                 ' Did you want to reset your password?'))
             return redirect('/')
 
-        user = User(
-            username=email if len(email) <= 30 else get_random_string(25),
-            email=email)
+        username_field = User._meta.get_field(User.USERNAME_FIELD)
+
+        kwargs = {}
+        if username_field.name == 'email':
+            kwargs['email'] = email
+        else:
+            username = email
+
+            # If email exceeds max length of field set username to random
+            # string
+            max_length = username_field.max_length
+            if len(username) > max_length:
+                username = get_random_string(
+                    25 if max_length >= 25 else max_length)
+            kwargs[username_field.name] = username
+
+            # Set value for 'email' field in case the user model has one
+            try:
+                User._meta.get_field('email')
+                kwargs['email'] = email
+            except FieldDoesNotExist:
+                pass
+
+        user = User(**kwargs)
 
     if request.method == 'POST':
         form = SetPasswordForm(user, request.POST)
