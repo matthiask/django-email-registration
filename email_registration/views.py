@@ -51,7 +51,8 @@ def email_registration_form(request, form_class=RegistrationForm):
     })
 
 
-def email_registration_confirm(request, code, max_age=3 * 86400):
+def email_registration_confirm(request, code, max_age=3 * 86400,
+                               form_class=SetPasswordForm):
     try:
         email, user = decode(code, max_age=max_age)
     except InvalidCode as exc:
@@ -91,7 +92,7 @@ def email_registration_confirm(request, code, max_age=3 * 86400):
         user = User(**kwargs)
 
     if request.method == 'POST':
-        form = SetPasswordForm(user, request.POST)
+        form = form_class(user, request.POST)
         if form.is_valid():
             user = form.save()
 
@@ -109,7 +110,7 @@ def email_registration_confirm(request, code, max_age=3 * 86400):
 
     else:
         messages.success(request, _('Please set a password.'))
-        form = SetPasswordForm(user)
+        form = form_class(user)
 
     return render(request, 'registration/password_set_form.html', {
         'form': form,
