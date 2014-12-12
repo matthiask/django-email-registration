@@ -22,6 +22,23 @@ def get_last_login_timestamp(user):
     return int(user.last_login.strftime('%s')) if user.last_login else 0
 
 
+def get_confirmation_url(email, request, user=None):
+    """
+    Returns the confirmation URL
+    """
+    code = [email, '', '']
+    if user:
+        code[1] = str(user.id)
+        code[2] = int_to_base36(get_last_login_timestamp(user))
+
+    return request.build_absolute_uri(
+        reverse(
+            'email_registration_confirm',
+            kwargs={
+                'code': get_signer().sign(u':'.join(code)),
+            }))
+
+
 def send_registration_mail(email, request, user=None):
     """
     Sends the registration mail
@@ -43,22 +60,10 @@ def send_registration_mail(email, request, user=None):
       is not required either.
     """
 
-    code = [email, '', '']
-    if user:
-        code[1] = str(user.id)
-        code[2] = int_to_base36(get_last_login_timestamp(user))
-
-    url = request.build_absolute_uri(
-        reverse(
-            'email_registration_confirm',
-            kwargs={
-                'code': get_signer().sign(u':'.join(code)),
-            }))
-
     render_to_mail(
         'registration/email_registration_email',
         {
-            'url': url,
+            'url': get_confirmation_url(email, request, user=user),
         },
         to=[email],
     ).send()
