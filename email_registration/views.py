@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib import messages
-from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import SetPasswordForm
 from django.db.models.fields import FieldDoesNotExist
 from django.shortcuts import redirect, render
@@ -12,7 +11,14 @@ from email_registration.signals import password_set
 from email_registration.utils import (
     InvalidCode, decode, send_registration_mail)
 
-User = get_user_model()
+try:
+    from django.contrib.auth import get_user_model
+except ImportError:
+    from django.contrib.auth.models import User
+    USERNAME_FIELD = 'username'
+else:
+    User = get_user_model()
+    USERNAME_FIELD = User.USERNAME_FIELD
 
 
 class RegistrationForm(forms.Form):
@@ -66,7 +72,7 @@ def email_registration_confirm(request, code, max_age=3 * 86400,
                 ' Did you want to reset your password?'))
             return redirect('/')
 
-        username_field = User._meta.get_field(User.USERNAME_FIELD)
+        username_field = User._meta.get_field(USERNAME_FIELD)
 
         kwargs = {}
         if username_field.name == 'email':
