@@ -25,8 +25,10 @@ Twitter Bootstrap.
         class="well" id="registration">
       {% csrf_token %}
       <div class="controls">
-        <input id="id_email" type="text" name="email" maxlength="30"
+        <input id="id_email" type="text" name="email" maxlength="75"
           placeholder="{% trans "Email address" %}">
+        <!--input id="id_next" type="hidden" name="next" maxlength="75"
+          value="/mypath/"-->
       </div>
       <button type="submit" class="btn btn-primary">
         {% trans "Register" %}</button>
@@ -49,7 +51,11 @@ Twitter Bootstrap.
    (Alternatively, include the template snippet
    ``registration/email_registration_include.html`` somewhere.)
 
+   The ``next`` field is optional and is passed to the ``auth.login`` view.
+
 3. Add ``email_registration`` to ``INSTALLED_APPS`` and include
    ``email_registration.urls`` somewhere in your URLconf.
+
+   Make sure Django can send emails.
 
 4. Presto.
