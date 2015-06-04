@@ -5,7 +5,7 @@ from django.core import signing
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.template.loader import TemplateDoesNotExist, render_to_string
-from django.utils.http import int_to_base36, urlquote
+from django.utils.http import int_to_base36
 from django.utils.translation import ugettext as _
 
 
@@ -26,18 +26,20 @@ def get_last_login_timestamp(user):
 
 def get_confirmation_url(email, request, user=None, next=None):
     """
-    Returns the confirmation URL
+    Returns the confirmation URL (urlquoted)
     """
     code = [email, '', '', next or '']
     if user:
         code[1] = str(user.id)
         code[2] = int_to_base36(get_last_login_timestamp(user))
 
+    link = get_signer().sign(u':'.join(code))
+
     return request.build_absolute_uri(
         reverse(
             'email_registration_confirm',
             kwargs={
-                'code': get_signer().sign(u':'.join(code)),
+                'code': link,
             }))
 
 
@@ -63,12 +65,13 @@ def send_registration_mail(email, request, user=None, next=None):
       version of the mail. This template is **NOT** available by default and
       is not required either.
     """
+    # url is correctly urlencoded in django 1.6 and later.
+    url = get_confirmation_url(email, request, user=user, next=next)
+
     render_to_mail(
         'registration/email_registration_email',
         {
-            'url': urlquote(
-                get_confirmation_url(email, request, user=user, next=next)
-            ),
+            'url': url,
         },
         to=[email],
     ).send()

@@ -22,21 +22,22 @@ class RedirectTest(TestCase):
             username='test',
         )
         request = self.factory.post('/er/')
-        url = get_confirmation_url(self.email, request)
+        url = urlunquote(get_confirmation_url(self.email, request))
         self.assertIn('http://testserver/er/test@example.com::::', url)
 
-        url = get_confirmation_url(self.email, request, next='/foo/')
+        url = urlunquote(get_confirmation_url(
+            self.email, request, next='/foo/'))
         self.assertIn('http://testserver/er/test@example.com:::/foo/:', url)
 
-        url = get_confirmation_url(self.email, request, user=user)
+        url = urlunquote(get_confirmation_url(self.email, request, user=user))
         self.assertTrue(re.match(
-            r'http://testserver/er/test@example.com:\d+:0::\w+:',
+            r'http://testserver/er/test@example.com:\d+:[0\w]+::\w+:',
             url))
 
-        url = get_confirmation_url(self.email, request,
-                                   user=user, next='/foo/')
+        url = urlunquote(get_confirmation_url(self.email, request,
+                         user=user, next='/foo/'))
         self.assertTrue(re.match(
-            r'http://testserver/er/test@example.com:\d+:0:/foo/:\w+:',
+            r'http://testserver/er/test@example.com:\d+:\w+:/foo/:\w+:',
             url))
 
     def test_url_decode(self):
@@ -48,22 +49,26 @@ class RedirectTest(TestCase):
         url = get_confirmation_url(self.email, request)
         match = re.search(r'http://testserver/er/(.+)/$', url)
         code = match.groups()[0]
+        code = urlunquote(code)
         self.assertEqual((self.email, None, ''), decode(code))
 
         url = get_confirmation_url(self.email, request, next='/foo/')
         match = re.search(r'http://testserver/er/(.+)/$', url)
         code = match.groups()[0]
+        code = urlunquote(code)
         self.assertEqual((self.email, None, '/foo/'), decode(code))
 
         url = get_confirmation_url(self.email, request, user=user)
         match = re.search(r'http://testserver/er/(.+)/$', url)
         code = match.groups()[0]
+        code = urlunquote(code)
         self.assertEqual((self.email, user, ''), decode(code))
 
         url = get_confirmation_url(self.email, request, user=user,
                                    next='/foo/')
         match = re.search(r'http://testserver/er/(.+)/$', url)
         code = match.groups()[0]
+        code = urlunquote(code)
         self.assertEqual((self.email, user, '/foo/'), decode(code))
 
     def test_default_redirect(self):
@@ -96,7 +101,8 @@ class RedirectTest(TestCase):
         url = urlunquote(
             [line for line in body.splitlines() if 'testserver' in line][0])
         self.assertTrue(
-            'http://testserver/er/test@example.com:::/foo/bar/:' in url)
+            'http://testserver/er/test@example.com:::/foo/bar/:' in url,
+            'url with redirect: %s' % url)
         response = self.client.get(url)
         self.assertContains(response, 'id="id_new_password2"')
 

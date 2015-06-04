@@ -81,7 +81,7 @@ class RegistrationTest(TestCase):
         url = urlunquote(
             [line for line in body.splitlines() if 'testserver' in line][0])
         self.assertTrue(re.match(
-            r'http://testserver/er/test@example.com:\d+:0::\w+:',
+            r'http://testserver/er/test@example.com:\d+:\w+::\w+:',
             url))
 
         response = self.client.get(url)
