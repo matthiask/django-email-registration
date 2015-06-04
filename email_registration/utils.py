@@ -1,9 +1,11 @@
+# coding: utf-8
+from __future__ import absolute_import, unicode_literals
 from django.contrib.auth.models import User
 from django.core import signing
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.template.loader import TemplateDoesNotExist, render_to_string
-from django.utils.http import int_to_base36
+from django.utils.http import int_to_base36, urlquote
 from django.utils.translation import ugettext as _
 
 
@@ -22,11 +24,11 @@ def get_last_login_timestamp(user):
     return int(user.last_login.strftime('%s')) if user.last_login else 0
 
 
-def get_confirmation_url(email, request, user=None):
+def get_confirmation_url(email, request, user=None, next=None):
     """
     Returns the confirmation URL
     """
-    code = [email, '', '']
+    code = [email, '', '', next or '']
     if user:
         code[1] = str(user.id)
         code[2] = int_to_base36(get_last_login_timestamp(user))
@@ -39,7 +41,7 @@ def get_confirmation_url(email, request, user=None):
             }))
 
 
-def send_registration_mail(email, request, user=None):
+def send_registration_mail(email, request, user=None, next=None):
     """
     Sends the registration mail
 
@@ -49,6 +51,8 @@ def send_registration_mail(email, request, user=None):
       URL (including protocol and domain) for the registration link.
     * ``user``: Optional user instance. If the user exists already and you
       just want to send a link where the user can choose his/her password.
+    * ``next``: The URL where the requests are redirected after login.
+                This should be URL encoded.
 
     The mail is rendered using the following two templates:
 
@@ -59,11 +63,12 @@ def send_registration_mail(email, request, user=None):
       version of the mail. This template is **NOT** available by default and
       is not required either.
     """
-
     render_to_mail(
         'registration/email_registration_email',
         {
-            'url': get_confirmation_url(email, request, user=user),
+            'url': urlquote(
+                get_confirmation_url(email, request, user=user, next=next)
+            ),
         },
         to=[email],
     ).send()
@@ -94,13 +99,13 @@ def decode(code, max_age=3 * 86400):
             'Unable to verify the signature. Please request a new'
             ' registration link.'))
 
-    parts = data.rsplit(':', 2)
-    if len(parts) != 3:
+    parts = data.rsplit(':', 3)
+    if len(parts) != 4:
         raise InvalidCode(_(
             'Something went wrong while decoding the'
             ' registration request. Please try again.'))
 
-    email, uid, timestamp = parts
+    email, uid, timestamp, next = parts
     if uid and timestamp:
         try:
             user = User.objects.get(pk=uid)
@@ -115,7 +120,7 @@ def decode(code, max_age=3 * 86400):
     else:
         user = None
 
-    return email, user
+    return email, user, next
 
 
 def render_to_mail(template, context, **kwargs):

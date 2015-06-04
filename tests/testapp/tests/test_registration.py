@@ -17,7 +17,10 @@ def _messages(response):
 
 
 class RegistrationTest(TestCase):
+    """ Functional tests for the registration process """
     def test_registration(self):
+        self.assertFalse(User.objects.filter(
+            email='test@example.com').exists())
         response = self.client.get('/er/')
 
         self.assertEqual(response.status_code, 405)
@@ -34,8 +37,7 @@ class RegistrationTest(TestCase):
         body = mail.outbox[0].body
         url = urlunquote(
             [line for line in body.splitlines() if 'testserver' in line][0])
-
-        self.assertTrue('http://testserver/er/test@example.com:::' in url)
+        self.assertTrue('http://testserver/er/test@example.com::::' in url)
 
         response = self.client.get(url)
         self.assertContains(response, 'id="id_new_password2"')
@@ -45,6 +47,8 @@ class RegistrationTest(TestCase):
             'new_password2': 'passss',
         })
         self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(
+            email='test@example.com').exists())
 
         response = self.client.post(url, {
             'new_password1': 'pass',
@@ -57,6 +61,7 @@ class RegistrationTest(TestCase):
         self.assertEqual(user.email, 'test@example.com')
         self.assertEqual(user.is_active, True)
 
+        # django auth login
         response = self.client.post('/ac/login/', {
             'username': 'test@example.com',
             'password': 'pass',
@@ -75,9 +80,8 @@ class RegistrationTest(TestCase):
         body = mail.outbox[0].body
         url = urlunquote(
             [line for line in body.splitlines() if 'testserver' in line][0])
-
         self.assertTrue(re.match(
-            r'http://testserver/er/test@example.com:\d+:\w+:',
+            r'http://testserver/er/test@example.com:\d+:0::\w+:',
             url))
 
         response = self.client.get(url)
