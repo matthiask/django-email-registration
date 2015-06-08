@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-10 12:25+0200\n"
+"POT-Creation-Date: 2015-06-08 03:36-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,47 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-
-#: utils.py:79
-msgid "The link is expired. Please request another registration link."
-msgstr "Der Link ist verfallen. Bitte beantragen Sie einen neuen Link."
-
-#: utils.py:84
-msgid "Unable to verify the signature. Please request a new registration link."
-msgstr ""
-"Konnte die Signatur nicht verifizieren. Bitte beantragen Sie einen neuen "
-"Link."
-
-#: utils.py:90 utils.py:99
-msgid ""
-"Something went wrong while decoding the registration request. Please try "
-"again."
-msgstr "Etwas ist schiefgelaufen. Bitte versuchen Sie es nochmals."
-
-#: utils.py:103
-msgid "The link has already been used."
-msgstr "Der Link wurde schon verwendet."
-
-#: views.py:19 views.py:21
-msgid "email address"
-msgstr "Emailadresse"
-
-#: views.py:28 views.py:61
-msgid ""
-"This email address already exists as an account. Did you want to reset your "
-"password?"
-msgstr ""
-"Die Emailadresse existiert schon im System. Wollten Sie Ihr Passwort "
-"zurücksetzen?"
-
-#: views.py:82
-msgid "Successfully set the new password. Please login now."
-msgstr ""
-"Das neue Passwort wurde erfolgreich gesetzt. Sie können sich jetzt anmelden."
-
-#: views.py:87
-msgid "Please set a password."
-msgstr "Bitte setzen Sie ein neues Passwort."
 
 #: templates/registration/email_registration_email.txt:2
 msgid "Registration link"
@@ -68,9 +27,12 @@ msgid "Click the following link to activate your account:"
 msgstr "Besuchen Sie den folgenden Link um Ihr Konto zu aktivieren:"
 
 #: templates/registration/email_registration_email.txt:8
+#| msgid ""
+#| "Please note that this link expires after 3 days. If you wait\n"
+#| "longer, you'll have to request another registration link."
 msgid ""
-"Please note that this link expires after 3 days. If you wait\n"
-"longer, you'll have to request another registration link."
+"Please note that this link expires after 3 days. If you waited\n"
+"longer, you would have to request another registration link."
 msgstr ""
 "Dieser Link ist nur 3 Tage gültig. Wenn Sie länger warten,\n"
 "müssen Sie einen neuen Link anfordern."
@@ -86,7 +48,7 @@ msgstr "Registrieren"
 
 #: templates/registration/email_registration_include.html:7
 msgid "Email address"
-msgstr "Emailadresse"
+msgstr "E-Mail-Adresse"
 
 #: templates/registration/email_registration_sent.html:3
 #, python-format
@@ -94,7 +56,7 @@ msgid ""
 "We sent you an email to %(email)s.\n"
 "  Please click the contained link to finish your registration."
 msgstr ""
-"Wir haben ein Email an %(email)s verschickt. Bitte besuchen Sie den darin "
+"Wir haben ein E-Mail an %(email)s verschickt. Bitte besuchen Sie den darin "
 "enthaltenen Link um die Registrierung abzuschliessen."
 
 #: templates/registration/password_set_form.html:4
@@ -102,6 +64,47 @@ msgstr ""
 #: templates/registration/password_set_form.html:21
 msgid "Set password"
 msgstr "Passwort setzen"
+
+#: utils.py:90
+msgid "The link is expired. Please request another registration link."
+msgstr "Der Link ist verfallen. Bitte beantragen Sie einen neuen Link."
+
+#: utils.py:94
+msgid "Unable to verify the signature. Please request a new registration link."
+msgstr ""
+"Die Signatur konnte nicht verifiziert werden. Bitte beantragen Sie einen "
+"neuen Link."
+
+#: utils.py:100 utils.py:109
+msgid ""
+"Something went wrong while decoding the registration request. Please try "
+"again."
+msgstr "Etwas ist schiefgelaufen. Bitte versuchen Sie es nochmals."
+
+#: utils.py:113
+msgid "The link has already been used."
+msgstr "Der Link wurde schon verwendet."
+
+#: views.py:26 views.py:29
+msgid "email address"
+msgstr "E-Mail-Adresse"
+
+#: views.py:37 views.py:71
+msgid ""
+"This email address already exists as an account. Did you want to reset your "
+"password?"
+msgstr ""
+"Die E-Mail-Adresse existiert schon im System. Wollten Sie Ihr Passwort "
+"zurücksetzen?"
+
+#: views.py:113
+msgid "Successfully set the new password. Please login now."
+msgstr ""
+"Das neue Passwort wurde erfolgreich gesetzt. Sie können sich jetzt anmelden."
+
+#: views.py:118
+msgid "Please set a password."
+msgstr "Bitte setzen Sie ein neues Passwort."
 
 #~ msgid "Successfully created a new user. Please set a password."
 #~ msgstr ""
