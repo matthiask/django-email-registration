@@ -1,6 +1,9 @@
+from __future__ import absolute_import, unicode_literals
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.forms import SetPasswordForm
+from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.db.models.fields import FieldDoesNotExist
 from django.shortcuts import redirect, render
 from django.utils.crypto import get_random_string
@@ -22,6 +25,12 @@ else:
 
 
 class RegistrationForm(forms.Form):
+    """
+    The base form for the registration. Handles the creation of the
+    confirmation URL.
+    This form has an additional property 'next' which carries the redirect
+    parameter to the login page
+    """
     email = forms.EmailField(
         label=ugettext_lazy('email address'),
         max_length=75,
@@ -29,6 +38,10 @@ class RegistrationForm(forms.Form):
             'placeholder': ugettext_lazy('email address'),
         }),
     )
+    next = forms.CharField(
+        widget=forms.HiddenInput(),
+        max_length=75,
+        required=False)
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -38,15 +51,23 @@ class RegistrationForm(forms.Form):
                 ' Did you want to reset your password?'))
         return email
 
+    def clean_next(self):
+        next = self.cleaned_data.get('next')
+        if next:
+            if ':' in next:
+                raise ValidationError(
+                    _('The next parameter cannot contain a ":" character.'))
+            return next
+
 
 @require_POST
 def email_registration_form(request, form_class=RegistrationForm):
     # TODO unajaxify this view for the release?
     form = form_class(request.POST)
-
     if form.is_valid():
         email = form.cleaned_data['email']
-        send_registration_mail(email, request)
+        next = form.cleaned_data.get('next')
+        send_registration_mail(email, request, next=next)
 
         return render(request, 'registration/email_registration_sent.html', {
             'email': email,
@@ -60,7 +81,7 @@ def email_registration_form(request, form_class=RegistrationForm):
 def email_registration_confirm(request, code, max_age=3 * 86400,
                                form_class=SetPasswordForm):
     try:
-        email, user = decode(code, max_age=max_age)
+        email, user, next = decode(code, max_age=max_age)
     except InvalidCode as exc:
         messages.error(request, '%s' % exc)
         return redirect('/')
@@ -112,6 +133,9 @@ def email_registration_confirm(request, code, max_age=3 * 86400,
             messages.success(request, _(
                 'Successfully set the new password. Please login now.'))
 
+            if next:
+                url = '%s?next=%s' % (reverse('login'), next)
+                return redirect(url)
             return redirect('login')
 
     else:

@@ -5,7 +5,7 @@
 
 {{ url }}
 
-{% blocktrans %}Please note that this link expires after 3 days. If you wait
-longer, you'll have to request another registration link.{% endblocktrans %}
+{% blocktrans %}Please note that this link expires after 3 days. If you waited
+longer, you would have to request another registration link.{% endblocktrans %}
 
 {% trans "Best regards" %}
