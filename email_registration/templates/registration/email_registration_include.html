@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load url from future %}
+
 <form method="post" action="{% url "email_registration_form" %}" class="well" id="registration">
   {% csrf_token %}
   <div class="controls">

@@ -32,7 +32,7 @@ setup(
         ],
     },
     install_requires=[
-        'Django>=1.4.2',
+        'Django>=1.8',
         # Yes, email_registration can be used without towel. towel is only
         # a requirement if you want to use the bundled templates.
     ],
@@ -45,10 +45,9 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
