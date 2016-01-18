@@ -52,4 +52,7 @@ Twitter Bootstrap.
 3. Add ``email_registration`` to ``INSTALLED_APPS`` and include
    ``email_registration.urls`` somewhere in your URLconf.
 
-4. Presto.
+4. Make sure that Django is able to
+  `send emails <https://docs.djangoproject.com/en/stable/topics/email/>`_.
+
+5. Presto.
