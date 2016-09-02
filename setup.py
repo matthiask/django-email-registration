@@ -19,23 +19,7 @@ setup(
     license='BSD License',
     platforms=['OS Independent'],
     packages=find_packages(),
-    package_data={
-        '': ['*.html', '*.txt'],
-        'email_registration': [
-            'locale/*/*/*.*',
-            # 'static/email_registration/*.*',
-            # 'static/email_registration/*/*.*',
-            'templates/*.*',
-            'templates/*/*.*',
-            'templates/*/*/*.*',
-            'templates/*/*/*/*.*',
-        ],
-    },
-    install_requires=[
-        'Django>=1.8',
-        # Yes, email_registration can be used without towel. towel is only
-        # a requirement if you want to use the bundled templates.
-    ],
+    include_package_data=True,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
