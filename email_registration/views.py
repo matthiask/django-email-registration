@@ -13,7 +13,7 @@ from email_registration.utils import (
 
 try:
     from django.contrib.auth import get_user_model
-except ImportError:
+except ImportError:  # pragma: no cover
     from django.contrib.auth.models import User
     USERNAME_FIELD = 'username'
 else:
