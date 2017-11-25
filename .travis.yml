@@ -10,6 +10,8 @@ env:
   - REQ="Django>=1.11,<2.0"
   - REQ="Django==2.0rc1"
 matrix:
+  allow_failures:
+    - env: REQ="Django==2.0rc1"
   exclude:
     - python: "2.7"
       env: REQ="Django==2.0rc1"
