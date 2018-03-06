@@ -31,7 +31,7 @@ LOGIN_REDIRECT_URL = '/?login=1'
 
 ROOT_URLCONF = 'testapp.urls'
 LANGUAGES = (('en', 'English'), ('de', 'German'))
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
