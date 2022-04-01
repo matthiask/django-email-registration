@@ -1,19 +1,17 @@
-from django.conf.urls import url
+from django.urls import path
 
-from email_registration.views import (
-    email_registration_form, email_registration_confirm
-)
+from email_registration.views import email_registration_confirm, email_registration_form
 
 
 urlpatterns = [
-    url(
-        r'^$',
+    path(
+        "",
         email_registration_form,
-        name='email_registration_form',
+        name="email_registration_form",
     ),
-    url(
-        r'^(?P<code>[^/]+)/$',
+    path(
+        "<str:code>/",
         email_registration_confirm,
-        name='email_registration_confirm',
+        name="email_registration_confirm",
     ),
 ]
